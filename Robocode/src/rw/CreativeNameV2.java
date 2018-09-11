@@ -40,7 +40,7 @@ public class CreativeNameV2 extends AdvancedRobot {
         // demonstrate feature of debugging properties on RobotDialog
         setDebugProperty("lastScannedRobot", e.getName() + " at " + e.getBearing() + " degrees at time " + getTime());
 
-        fire(1);
+        fire(2);
     }
 
     /**
