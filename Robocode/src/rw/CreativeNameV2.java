@@ -3,7 +3,7 @@ package rw;
 import robocode.HitByBulletEvent;
 import robocode.AdvancedRobot;
 import robocode.ScannedRobotEvent;
-
+import robocode.util.Utils;
 import java.awt.*;
 
 
@@ -25,12 +25,19 @@ public class CreativeNameV2 extends AdvancedRobot {
      * PaintingRobot's run method - Seesaw
      */
     public void run() {
-        while (true) {
-            ahead(100);
-            turnGunRight(360);
-            back(100);
-            turnGunRight(360);
-        }
+
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        do {
+
+            if (getRadarTurnRemaining() == 0.0)
+                setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
+
+            execute();
+
+        } while (true) ;
+
+
     }
 
     /**
@@ -40,6 +47,15 @@ public class CreativeNameV2 extends AdvancedRobot {
         // demonstrate feature of debugging properties on RobotDialog
         setDebugProperty("lastScannedRobot", e.getName() + " at " + e.getBearing() + " degrees at time " + getTime());
 
+        double ate = getHeadingRadians() + e.getBearingRadians ();
+        double rturn = Utils.normalRelativeAngle(ate - getRadarHeadingRadians());
+        double eturn = Math.min(Math.atan(36 / e.getDistance() ), Rules.RADAR_TURN_RATE_RADIANS);
+        if (rturn < 0)
+            rturn -= eturn;
+        else
+            rturn += eturn;
+
+        setTurnRadarRightRadians(rturn);
         fire(2);
     }
 
