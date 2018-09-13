@@ -2,6 +2,7 @@ package rw;
 
 import robocode.HitByBulletEvent;
 import robocode.AdvancedRobot;
+import robocode.Rules;
 import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 import java.awt.*;
