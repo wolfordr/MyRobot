@@ -51,6 +51,7 @@ public class CreativeNameV2 extends AdvancedRobot {
         double ate = getHeadingRadians() + e.getBearingRadians ();
         double rturn = Utils.normalRelativeAngle(ate - getRadarHeadingRadians());
         double eturn = Math.min(Math.atan(36 / e.getDistance() ), Rules.RADAR_TURN_RATE_RADIANS);
+        setTurnGunRightRadians(rturn);
         if (rturn < 0)
             rturn -= eturn;
         else
@@ -82,6 +83,7 @@ public class CreativeNameV2 extends AdvancedRobot {
         g.drawOval((int) (getX() - 60), (int) (getY() - 60), 120, 120);
 
         turnLeft(90 - e.getBearing());
+        back(50);
     }
 
     /**
