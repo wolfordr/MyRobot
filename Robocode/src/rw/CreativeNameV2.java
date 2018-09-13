@@ -59,6 +59,8 @@ public class CreativeNameV2 extends AdvancedRobot {
 
         setTurnRadarRightRadians(rturn);
         fire(2);
+        ahead(100);
+        back(100);
     }
 
     /**
