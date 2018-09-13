@@ -35,7 +35,8 @@ public class CreativeNameV2 extends AdvancedRobot {
                 setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
             execute();
-
+            ahead(100);
+            back(100);
         } while (true) ;
 
 
@@ -47,20 +48,28 @@ public class CreativeNameV2 extends AdvancedRobot {
     public void onScannedRobot(ScannedRobotEvent e) {
         // demonstrate feature of debugging properties on RobotDialog
         setDebugProperty("lastScannedRobot", e.getName() + " at " + e.getBearing() + " degrees at time " + getTime());
-
+        double enemyen = e.getEnergy();
+        if(e.getEnergy() < enemyen)
+            back(20);
         double ate = getHeadingRadians() + e.getBearingRadians ();
         double rturn = Utils.normalRelativeAngle(ate - getRadarHeadingRadians());
         double eturn = Math.min(Math.atan(36 / e.getDistance() ), Rules.RADAR_TURN_RATE_RADIANS);
-        setTurnGunRightRadians(rturn);
-        if (rturn < 0)
+        if (rturn < 0) {
+
+
             rturn -= eturn;
-        else
+            setTurnGunRightRadians(getRadarHeadingRadians() - getGunHeadingRadians());
+        }
+        else {
             rturn += eturn;
+            setTurnGunRightRadians(getRadarHeadingRadians() - getGunHeadingRadians());
+        }
 
         setTurnRadarRightRadians(rturn);
-        fire(2);
-        ahead(100);
-        back(100);
+        fire(0.5);
+        if(e.getEnergy() < enemyen)
+            back(20);
+
     }
 
     /**
@@ -84,8 +93,7 @@ public class CreativeNameV2 extends AdvancedRobot {
         g.drawOval((int) (getX() - 59), (int) (getY() - 59), 118, 118);
         g.drawOval((int) (getX() - 60), (int) (getY() - 60), 120, 120);
 
-        turnLeft(90 - e.getBearing());
-        back(50);
+
     }
 
     /**
