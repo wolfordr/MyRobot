@@ -66,7 +66,7 @@ public class CreativeNameV2 extends AdvancedRobot {
         }
 
         setTurnRadarRightRadians(rturn);
-        fire(0.5);
+        fire(2.5);
         if(e.getEnergy() < enemyen)
             back(20);
 
