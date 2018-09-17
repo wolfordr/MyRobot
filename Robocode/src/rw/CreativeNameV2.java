@@ -6,6 +6,10 @@ import robocode.Rules;
 import robocode.ScannedRobotEvent;
 import robocode.util.Utils;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
+
+import static robocode.util.Utils.normalRelativeAngleDegrees;
 
 
 /**
@@ -22,6 +26,18 @@ import java.awt.*;
  */
 public class CreativeNameV2 extends AdvancedRobot {
 
+    public int sameDirectionCounter = 0;
+
+
+    public long moveTime = 1;
+
+
+    public static int moveDirection = 1;
+
+
+    public static double lastBulletSpeed = 15.0;
+
+    public double wallStick = 120;
     /**
      * PaintingRobot's run method - Seesaw
      */
@@ -35,8 +51,6 @@ public class CreativeNameV2 extends AdvancedRobot {
                 setTurnRadarRightRadians(Double.POSITIVE_INFINITY);
 
             execute();
-            ahead(100);
-            back(100);
         } while (true) ;
 
 
@@ -48,28 +62,68 @@ public class CreativeNameV2 extends AdvancedRobot {
     public void onScannedRobot(ScannedRobotEvent e) {
         // demonstrate feature of debugging properties on RobotDialog
         setDebugProperty("lastScannedRobot", e.getName() + " at " + e.getBearing() + " degrees at time " + getTime());
-        double enemyen = e.getEnergy();
-        if(e.getEnergy() < enemyen)
-            back(20);
-        double ate = getHeadingRadians() + e.getBearingRadians ();
-        double rturn = Utils.normalRelativeAngle(ate - getRadarHeadingRadians());
-        double eturn = Math.min(Math.atan(36 / e.getDistance() ), Rules.RADAR_TURN_RATE_RADIANS);
-        if (rturn < 0) {
+        double absBearing = e.getBearingRadians() + getHeadingRadians();
+        double distance = e.getDistance() + (Math.random()-0.5)*5.0;
+        double radarTurn = Utils.normalRelativeAngle(absBearing
 
+                - getRadarHeadingRadians() );
 
-            rturn -= eturn;
-            setTurnGunRightRadians(getRadarHeadingRadians() - getGunHeadingRadians());
+        double baseScanSpan = (18.0 + 36.0*Math.random());
+        double extraTurn = Math.min(Math.atan(baseScanSpan / distance), Math.PI/4.0);
+        setTurnRadarRightRadians(radarTurn + (radarTurn < 0 ? -extraTurn : extraTurn));
+
+        if (--moveTime <= 0) {
+            distance = Math.max(distance, 100 + Math.random() * 50) * 1.25;
+            moveTime = 50 + (long) (distance / lastBulletSpeed);
+
+            ++sameDirectionCounter;
+
+            if (Math.random() < 0.5 || sameDirectionCounter > 16) {
+                moveDirection = -moveDirection;
+                sameDirectionCounter = 0;
+            }
         }
-        else {
-            rturn += eturn;
-            setTurnGunRightRadians(getRadarHeadingRadians() - getGunHeadingRadians());
+        double goalDirection = absBearing - Math.PI / 2.0 * moveDirection;
+        double x = getX();
+        double y = getY();
+        double smooth = 0;
+        Rectangle2D fieldRect = new Rectangle2D.Double(18, 18, getBattleFieldWidth() - 36, getBattleFieldHeight() - 36);
+
+        while (!fieldRect.contains(x + Math.sin(goalDirection) * wallStick, y + Math.cos(goalDirection) * wallStick)) {
+            goalDirection += moveDirection * 0.1;
+            smooth += 0.1;
+        }
+        if (smooth > 0.5 + Math.random() * 0.125) {
+            moveDirection = -moveDirection;
+            sameDirectionCounter = 0;
         }
 
-        setTurnRadarRightRadians(rturn);
-        fire(2.5);
-        if(e.getEnergy() < enemyen)
-            back(20);
+        double turn = Utils.normalRelativeAngle(goalDirection - getHeadingRadians());
 
+        if (Math.abs(turn) > Math.PI / 2) {
+            turn = Utils.normalRelativeAngle(turn + Math.PI);
+            setBack(100);
+        } else {
+            setAhead(100);
+        }
+
+        setTurnRightRadians(turn);
+
+        double bulletPower = 1.0 + Math.random() * 2.0;
+        double bulletSpeed = 20 - 3 * bulletPower;
+
+        double enemyLatVel = e.getVelocity() * Math.sin(e.getHeadingRadians() - absBearing);
+        double escapeAngle = Math.asin(8.0 / bulletSpeed);
+
+        double enemyDirection = Math.signum(enemyLatVel);
+        double angleOffset = escapeAngle * enemyDirection * Math.random();
+        setTurnGunRightRadians(Utils.normalRelativeAngle(absBearing + angleOffset - getGunHeadingRadians()));
+
+        if (getEnergy() > bulletPower) {
+            setFire(bulletPower);
+
+
+        }
     }
 
     /**
