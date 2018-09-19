@@ -27,16 +27,11 @@ import static robocode.util.Utils.normalRelativeAngleDegrees;
 public class CreativeNameV2 extends AdvancedRobot {
 
     public int sameDirectionCounter = 0;
-
-
+    public double eEnergyFirst = 100;
+    public double eEnergySecond;
     public long moveTime = 1;
-
-
     public static int moveDirection = 1;
-
-
     public static double lastBulletSpeed = 15.0;
-
     public double wallStick = 120;
     /**
      * PaintingRobot's run method - Seesaw
@@ -62,11 +57,13 @@ public class CreativeNameV2 extends AdvancedRobot {
     public void onScannedRobot(ScannedRobotEvent e) {
         // demonstrate feature of debugging properties on RobotDialog
         setDebugProperty("lastScannedRobot", e.getName() + " at " + e.getBearing() + " degrees at time " + getTime());
+        eEnergySecond = e.getEnergy();
+
+
+
         double absBearing = e.getBearingRadians() + getHeadingRadians();
         double distance = e.getDistance() + (Math.random()-0.5)*5.0;
-        double radarTurn = Utils.normalRelativeAngle(absBearing
-
-                - getRadarHeadingRadians() );
+        double radarTurn = Utils.normalRelativeAngle(absBearing - getRadarHeadingRadians() );
 
         double baseScanSpan = (18.0 + 36.0*Math.random());
         double extraTurn = Math.min(Math.atan(baseScanSpan / distance), Math.PI/4.0);
@@ -99,13 +96,13 @@ public class CreativeNameV2 extends AdvancedRobot {
         }
 
         double turn = Utils.normalRelativeAngle(goalDirection - getHeadingRadians());
+            if (Math.abs(turn) > Math.PI / 2) {
+                turn = Utils.normalRelativeAngle(turn + Math.PI);
+                setBack(100);
+            } else {
+                setAhead(100);
+            }
 
-        if (Math.abs(turn) > Math.PI / 2) {
-            turn = Utils.normalRelativeAngle(turn + Math.PI);
-            setBack(100);
-        } else {
-            setAhead(100);
-        }
 
         setTurnRightRadians(turn);
 
@@ -123,7 +120,9 @@ public class CreativeNameV2 extends AdvancedRobot {
             setFire(bulletPower);
 
 
+
         }
+        eEnergyFirst = e.getEnergy();
     }
 
     /**
