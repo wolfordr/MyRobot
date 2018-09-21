@@ -100,13 +100,13 @@ public class CreativeNameV2 extends AdvancedRobot {
                 turn = Utils.normalRelativeAngle(turn + Math.PI);
                 setBack(100);
             } else {
-                setAhead(100);
+                setAhead(90);
             }
 
 
         setTurnRightRadians(turn);
 
-        double bulletPower = 1.0 + Math.random() * 2.0;
+        double bulletPower = 1.0 + Math.random() * 1.5;
         double bulletSpeed = 20 - 3 * bulletPower;
 
         double enemyLatVel = e.getVelocity() * Math.sin(e.getHeadingRadians() - absBearing);
@@ -158,5 +158,10 @@ public class CreativeNameV2 extends AdvancedRobot {
         g.setColor(new Color(0, 0xFF, 0, 30));
         g.fillOval((int) (getX() - 60), (int) (getY() - 60), 120, 120);
     }
+
+    /*public
+
+
+     */
 }
 
