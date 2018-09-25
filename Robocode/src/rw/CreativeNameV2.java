@@ -56,6 +56,7 @@ public class CreativeNameV2 extends AdvancedRobot {
         // demonstrate feature of debugging properties on RobotDialog
         setDebugProperty("lastScannedRobot", e.getName() + " at " + e.getBearing() + " degrees at time " + getTime());
         eEnergySecond = e.getEnergy();
+        double heading = getGunHeading();
         if (eEnergySecond < eEnergyFirst) {
             eEnergyFirst = eEnergySecond;
             if (!hit) {
