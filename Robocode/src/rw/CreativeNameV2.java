@@ -1,9 +1,6 @@
 package rw;
 
-import robocode.HitByBulletEvent;
-import robocode.AdvancedRobot;
-import robocode.Rules;
-import robocode.ScannedRobotEvent;
+import robocode.*;
 import robocode.util.Utils;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -33,6 +30,7 @@ public class CreativeNameV2 extends AdvancedRobot {
     public static int moveDirection = 1;
     public static double lastBulletSpeed = 15.0;
     public double wallStick = 120;
+    public boolean hit = false;
     /**
      * PaintingRobot's run method - Seesaw
      */
@@ -58,6 +56,16 @@ public class CreativeNameV2 extends AdvancedRobot {
         // demonstrate feature of debugging properties on RobotDialog
         setDebugProperty("lastScannedRobot", e.getName() + " at " + e.getBearing() + " degrees at time " + getTime());
         eEnergySecond = e.getEnergy();
+        if (eEnergySecond < eEnergyFirst) {
+            eEnergyFirst = eEnergySecond;
+            if (!hit) {
+                Graphics2D g = getGraphics();
+                g.setColor(Color.RED);
+                g.drawOval((int) (getX() - 55), (int) (getY() - 55), 110, 110);
+            }
+            else
+                hit = false;
+        }
 
 
 
@@ -122,7 +130,6 @@ public class CreativeNameV2 extends AdvancedRobot {
 
 
         }
-        eEnergyFirst = e.getEnergy();
     }
 
     /**
@@ -138,13 +145,7 @@ public class CreativeNameV2 extends AdvancedRobot {
         setDebugProperty("lastScannedRobot", null);
 
         // gebugging by painting to battle view
-        Graphics2D g = getGraphics();
 
-        g.setColor(Color.orange);
-        g.drawOval((int) (getX() - 55), (int) (getY() - 55), 110, 110);
-        g.drawOval((int) (getX() - 56), (int) (getY() - 56), 112, 112);
-        g.drawOval((int) (getX() - 59), (int) (getY() - 59), 118, 118);
-        g.drawOval((int) (getX() - 60), (int) (getY() - 60), 120, 120);
 
 
     }
@@ -152,16 +153,13 @@ public class CreativeNameV2 extends AdvancedRobot {
     /**
      * Paint a red circle around our PaintingRobot
      */
-    public void onPaint(Graphics2D g) {
-        g.setColor(Color.red);
-        g.drawOval((int) (getX() - 50), (int) (getY() - 50), 100, 100);
-        g.setColor(new Color(0, 0xFF, 0, 30));
-        g.fillOval((int) (getX() - 60), (int) (getY() - 60), 120, 120);
+
+
+
+    public void onBulletHit (BulletHitEvent e){
+        hit = true;
     }
 
-    /*public
 
-
-     */
 }
 
