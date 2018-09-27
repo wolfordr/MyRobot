@@ -63,6 +63,9 @@ public class CreativeNameV2 extends AdvancedRobot {
                 Graphics2D g = getGraphics();
                 g.setColor(Color.RED);
                 g.drawOval((int) (getX() - 55), (int) (getY() - 55), 110, 110);
+
+
+                dodge();
             }
             else
                 hit = false;
@@ -160,6 +163,16 @@ public class CreativeNameV2 extends AdvancedRobot {
     public void onBulletHit (BulletHitEvent e){
         hit = true;
     }
+
+
+    public void dodge() {
+        if (Math.random() + 1 > 0.5)
+            ahead(20);
+        else
+            back(20);
+    }
+
+
 
 
 }
