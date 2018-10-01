@@ -65,7 +65,15 @@ public class CreativeNameV2 extends AdvancedRobot {
                 g.drawOval((int) (getX() - 55), (int) (getY() - 55), 110, 110);
 
 
-                dodge();
+                double angle = e.getHeading();
+                double enemyY ((Int)(getX() + Math.sin(angle) * e.getDistance()));
+                 double enemyX ((Int)(getX() + Math.cos(angle) * e.getDistance()));
+                //double speed = 20 - 3 * (eEnergySecond - eEnergyFirst);
+
+               //  if (e.getDistance() / speed > 5) {// Time it takes to reach me
+
+                    dodge();
+                //}
             }
             else
                 hit = false;
@@ -167,9 +175,9 @@ public class CreativeNameV2 extends AdvancedRobot {
 
     public void dodge() {
         if (Math.random() + 1 > 0.5)
-            ahead(20);
+            ahead(30);
         else
-            back(20);
+            back(30);
     }
 
 
